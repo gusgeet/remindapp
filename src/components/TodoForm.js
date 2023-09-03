@@ -16,8 +16,8 @@ export const TodoForm = ({addTodo}) => {
     }
     return (
         <form className="TodoForm" onSubmit={handleSubmit}>
-            <input type="text" placeholder="tarea..." className="todo-input" value={value} onChange={(e) => setValue(e.target.value)} />
-            <textarea placeholder="detalles..."  className="todo-input" value={subvalue} onChange={(e) => setSubvalue(e.target.value)}></textarea>
+            <input type="text" placeholder="Tarea..." className="todo-input" value={value} onChange={(e) => setValue(e.target.value)} />
+            <textarea placeholder="Detalles..."  className="todo-input" value={subvalue} onChange={(e) => setSubvalue(e.target.value)}></textarea>
             <button type="submit" className="todo-btn">Agregar</button>
         </form>
     )

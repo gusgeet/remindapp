@@ -101,6 +101,16 @@ details {
   margin-top: 1rem;
 }
 
+.todo-btn-success {
+  background: #04AA6D;
+  color: white;
+  border: none;
+  padding: 0.55rem;
+  cursor: pointer;
+  width: 100px;
+  margin-top: 1rem;
+}
+
 .Todo {
   display: flex;
   justify-content: space-between;
@@ -120,6 +130,21 @@ details {
 .completed {
   color: #c5aeff;
   text-decoration: line-through;
+}
+
+.LogoContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.icon-todo {
+  margin-left: 30px;
+}
+
+.footer-edit {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 @media (max-width: 850px) {

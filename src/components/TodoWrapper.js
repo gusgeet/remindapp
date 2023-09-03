@@ -3,22 +3,39 @@ import { Todo } from "./Todo";
 import { TodoForm } from "./TodoForm";
 import { v4 as uuidv4 } from "uuid";
 import { EditTodoForm } from "./EditTodoForm";
+import CryptoJS from "crypto-js"
 
 export const TodoWrapper = () => {
   const [todos, setTodos] = useState([]);
+  const secretKey = 'a1b2c3d4'
 
   useEffect(() => {
     const savedTodos = JSON.parse(localStorage.getItem('todos')) || [];
-    setTodos(savedTodos);
+    if(window.location.href.includes('trgt=')) {
+      const toImport = window.location.href.split('trgt=')[1]
+      const decrypedTodo = CryptoJS.AES.decrypt(toImport, secretKey);
+      const task = decrypedTodo.toString(CryptoJS.enc.Utf8).split('|')[0];
+      const subtask = decrypedTodo.toString(CryptoJS.enc.Utf8).split('|')[1];
+      console.log(savedTodos)
+      const alreadyExistsTask = savedTodos.filter(x => x.task === task && x.subtask === subtask)
+      console.log(alreadyExistsTask)
+      if(alreadyExistsTask.length === 0) {
+        const todosWithImportedOne  = [
+          ...savedTodos,
+          { id: uuidv4(), task: task, subtask: subtask, completed: false, isEditing: false },
+        ];
+        localStorage.setItem('todos', JSON.stringify(todosWithImportedOne))
+        setTodos(todosWithImportedOne);
+      }
+    }
+    setTodos(savedTodos)    
 }, []);
 
   const addTodo = todo => {
-    console.log(todo)
     const newTodos  = [
       ...todos,
       { id: uuidv4(), task: todo.value, subtask: todo.subvalue, completed: false, isEditing: false },
     ];
-    console.log(newTodos)
     setTodos(newTodos)
     localStorage.setItem('todos', JSON.stringify(newTodos))
   }
@@ -44,31 +61,29 @@ export const TodoWrapper = () => {
       )
     );
   }
-
   const editTask = (task, id, subtask) => {
     const newTodos = todos.map(todo =>
         todo.id === id ? { ...todo, task, subtask, isEditing: !todo.isEditing } : todo
       );
     setTodos(newTodos)
     localStorage.setItem('todos', JSON.stringify(newTodos))
-    console.log(newTodos)
   };
 
   return (
   <div className="TodoContainer">
     <div className="TodoWrapperHolder">
-      <h1>TareasApp</h1>
+      <h1>Que habia en casApp</h1>
       <TodoForm addTodo={addTodo} />
     </div>
     <div className="TodoWrapper">
-    {todos !== 'undefined' ? (<h1>Tareas</h1>) : (
+    {todos.length !== 0 ? (<h1>Tareas</h1>) : (
        <div>
         <h1>Sin tareas</h1>
-        <p className="todo-p">Agregue una tarea con sus detalles, y luego haga click en Agregar. Podra verla en esta misma caja, y editarla o borrarla.</p>
+        <p className="todo-p">Agregue una tarea con sus detalles, y luego haga click en Agregar. Podra verla en esta misma caja, y editarla, borrarla o compartirla con otros usuarios.</p>
        </div>)}
     {todos.map(todo =>
       todo.isEditing ? (
-        <EditTodoForm editTodo={editTask} task={todo} />
+        <EditTodoForm key={todo.id} editTodo={editTask} task={todo} />
       ) : (
         <Todo
           key={todo.id}
